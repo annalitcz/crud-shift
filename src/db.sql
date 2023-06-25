@@ -19,6 +19,15 @@ CREATE TABLE jadwal_shift (
   FOREIGN KEY (kode_shift) REFERENCES shift(kode_shift),
   FOREIGN KEY (id_karyawan) REFERENCES karyawan(id_karyawan)
 );
+
+CREATE TABLE karyawan_old (
+  id_karyawan_old INT AUTO_INCREMENT,
+  nama_karyawan_old VARCHAR(50),
+  jabatan_karyawan_old VARCHAR(20),
+  tanggal_keluar DATE,
+  PRIMARY KEY (id_karyawan_old)
+);
+
 INSERT INTO shift (kode_shift, nama_shift, jam_mulai, jam_selesai)
 VALUES ('P', 'Shift Pagi', '07:00:00', '12:00:00'),
   ('S', 'Shift Siang', '12:00:00', '17:00:00');

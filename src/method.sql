@@ -116,4 +116,15 @@ WHERE s.jam_mulai >= '12:00:00' AND s.jam_selesai <= '17:00:00';
 
 -- Stored Function
 -- Built In Function
--- Trigger
+-- Trigger hapus karyawan :
+DELIMITER //
+
+CREATE TRIGGER trg_hapus_karyawan
+AFTER DELETE ON karyawan
+FOR EACH ROW
+BEGIN
+  INSERT INTO karyawan_old (id_karyawan_old, nama_karyawan_old, jabatan_karyawan_old, tanggal_keluar)
+  VALUES (OLD.id_karyawan, OLD.nama_karyawan, OLD.jabatan_karyawan, CURDATE());
+END //
+
+DELIMITER ;

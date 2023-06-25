@@ -132,6 +132,7 @@
             <option value="shift">Shift</option>
             <option value="karyawan">Karyawan</option>
             <option value="jadwal_shift">Jadwal Shift</option>
+            <option value="resign">Karyawan Old</option>
             <option value="jadwal_pagi">Shift pagi</option>
             <option value="jadwal_siang">Shift siang</option>
         </select>
@@ -280,6 +281,35 @@
                     echo "0 results";
                 }
                 echo "<br><a href='./method/tambahJadwal.php'>Tambah</a>";
+                break;
+            case "resign":
+                $sql = "SELECT * FROM karyawan_old WHERE nama_karyawan_old LIKE '%$search%'";
+                $result = mysqli_query($conn, $sql);
+                if (mysqli_num_rows($result) > 0) { ?>
+                    <h3 class="txt-center">Karyawan Old</h3>
+                    <div class="box-db">
+                        <?php
+                        echo "<table border='1'";
+                        echo "<tr>
+                        <th>ID karyawan</th>
+                        <th>Nama karyawan</th>
+                        <th>Jabatan karyawan</th>
+                        <th>Tanggal Resign</th>
+                      </tr>";
+                        while ($row = mysqli_fetch_assoc($result)) {
+                            echo "<tr>
+                            <td>" . $row["id_karyawan_old"] . "</td>
+                            <td>" . $row["nama_karyawan_old"] . "</td>
+                            <td>" . $row["jabatan_karyawan_old"] . "</td>
+                            <td>" . $row["tanggal_keluar"] . "</td>
+                          </tr>";
+                        }
+                        echo "</table>"; ?>
+                    </div>
+                <?php
+                } else {
+                    echo "0 results";
+                }
                 break;
             case "jadwal_pagi":
                 $sql = "SELECT * FROM v_shift_pagi";
