@@ -122,6 +122,14 @@
         margin-bottom: 0;
 
     }
+
+    tfoot td {
+        font-weight: bold;
+        color: #fff;
+        background-color: #0077b6;
+        padding: 8px;
+        border-top: 1px solid #ddd;
+    }
 </style>
 
 <body>
@@ -132,6 +140,7 @@
             <option value="shift">Shift</option>
             <option value="karyawan">Karyawan</option>
             <option value="jadwal_shift">Jadwal Shift</option>
+            <option value="info_jml_karyawan">Jumlah Karyawan</option>
             <option value="resign">Karyawan Old</option>
             <option value="jadwal_pagi">Shift pagi</option>
             <option value="jadwal_siang">Shift siang</option>
@@ -281,6 +290,45 @@
                     echo "0 results";
                 }
                 echo "<br><a href='./method/tambahJadwal.php'>Tambah</a>";
+                break;
+            case "info_jml_karyawan":
+                $sqlShift = "SELECT s.nama_shift AS 'Nama Shift', COUNT(js.id_karyawan) AS 'Jumlah Karyawan'
+             FROM shift s
+             LEFT JOIN jadwal_shift js ON s.kode_shift = js.kode_shift
+             GROUP BY s.kode_shift";
+                $resultShift = $conn->query($sqlShift);
+
+                // Mengambil total jumlah karyawan
+                $sqlTotal = "SELECT COUNT(*) AS 'Jumlah Karyawan' FROM jadwal_shift";
+                $resultTotal = $conn->query($sqlTotal);
+                $rowTotal = $resultTotal->fetch_assoc();
+                if ($resultShift->num_rows > 0) {
+                    echo "<table>
+                            <thead>
+                                <tr>
+                                    <th>Nama Shift</th>
+                                    <th>Jumlah Karyawan</th>
+                                </tr>
+                            </thead>
+                            <tbody>";
+                    // Menampilkan data shift dan jumlah karyawan
+                    while ($row = $resultShift->fetch_assoc()) {
+                        echo "<tr>
+                                <td>" . $row['Nama Shift'] . "</td>
+                                <td>" . $row['Jumlah Karyawan'] . "</td>
+                            </tr>";
+                    }
+                    echo "</tbody>
+                        <tfoot>
+                            <tr>
+                                <td>Total</td>
+                                <td>" . $rowTotal['Jumlah Karyawan'] . "</td>
+                            </tr>
+                        </tfoot>
+                    </table>";
+                } else {
+                    echo "Tidak ada data yang ditemukan.";
+                }
                 break;
             case "resign":
                 $sql = "SELECT * FROM karyawan_old WHERE nama_karyawan_old LIKE '%$search%'";

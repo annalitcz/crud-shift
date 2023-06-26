@@ -115,8 +115,17 @@ WHERE s.jam_mulai >= '12:00:00' AND s.jam_selesai <= '17:00:00';
 
 
 -- Stored Function
--- Built In Function
--- Trigger hapus karyawan :
+
+-- Built In Function jumlah karyawan:
+SELECT s.nama_shift AS "Nama Shift", COUNT(js.id_karyawan) AS "Jumlah Karyawan"
+FROM shift s
+LEFT JOIN jadwal_shift js ON s.kode_shift = js.kode_shift
+GROUP BY s.kode_shift
+UNION ALL
+SELECT 'Total' AS "Nama Shift", COUNT(js.id_karyawan) AS "Jumlah Karyawan"
+FROM jadwal_shift js;
+
+-- Trigger insert old karyawan :
 DELIMITER //
 
 CREATE TRIGGER trg_hapus_karyawan
