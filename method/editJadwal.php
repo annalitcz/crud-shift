@@ -21,65 +21,56 @@ if (isset($_POST['submit'])) {
 ?>
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>Edit Jadwal Shift</title>
 </head>
-
 <style>
-    body{
-        font-family: Arial, sans-serif;
-        margin-top: 30px;
-        display: grid;
-        place-items: center;
-    }
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  h2 {
+    text-align: center;
+    margin-top: 20px;
+  }
+
   .form-container {
-    display: grid;
-    place-items: center;
-    width: 400px;
+    max-width: 400px;
     margin: 0 auto;
     padding: 20px;
-    background-color: #0077b6;
+    background: #f2f2f2;
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   }
 
-  .form-container h2 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-
-  .form-container label {
+  label {
     display: block;
-    color: #fff;
-    margin-bottom: 10px;
     font-weight: bold;
+    margin-bottom: 5px;
   }
 
-  .form-container select,
-  .form-container input[type="date"] {
+  select,
+  input[type="date"] {
     width: 100%;
     padding: 10px;
+    margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     box-sizing: border-box;
-    font-size: 16px;
-    margin-bottom: 15px;
-    text-align: center;
   }
 
-  .form-container input[type="submit"] {
-    width: 50%;
-    padding: 10px;
-    background-color: #4caf50;
-    color: #fff;
+  input[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 16px;
+    float: right;
   }
 
-  .form-container input[type="submit"]:hover {
+  input[type="submit"]:hover {
     background-color: #45a049;
   }
 </style>
@@ -109,7 +100,7 @@ if (isset($_POST['submit'])) {
             <?php
             while ($row_shift = mysqli_fetch_assoc($result_shift)) {
                 $selected = ($row_shift['kode_shift'] == $row_jadwal['kode_shift']) ? "selected" : "";
-                echo "<option value='" . $row_shift['kode_shift'] . "' $selected>" . $row_shift['kode_shift'] . "</option>";
+                echo "<option value='" . $row_shift['kode_shift'] . "' $selected>" . $row_shift['kode_shift'] ." - ".$row_shift['nama_shift']. "</option>";
             }
             ?>
         </select><br>
@@ -119,7 +110,7 @@ if (isset($_POST['submit'])) {
             <?php
             while ($row_karyawan = mysqli_fetch_assoc($result_karyawan)) {
                 $selected = ($row_karyawan['id_karyawan'] == $row_jadwal['id_karyawan']) ? "selected" : "";
-                echo "<option value='" . $row_karyawan['id_karyawan'] . "' $selected>" . $row_karyawan['id_karyawan'] . "</option>";
+                echo "<option value='" . $row_karyawan['id_karyawan'] . "' $selected>" . $row_karyawan['id_karyawan'] ." - ".$row_karyawan['nama_karyawan'] ."</option>";
             }
             ?>
         </select><br>
@@ -129,7 +120,5 @@ if (isset($_POST['submit'])) {
 
         <input type="submit" name="submit" value="Edit">
     </form>
-
 </body>
-
 </html>

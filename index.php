@@ -126,7 +126,7 @@
     tfoot td {
         font-weight: bold;
         color: #fff;
-        background-color: #0077b6;
+        background-color: green;
         padding: 8px;
         border-top: 1px solid #ddd;
     }
@@ -293,17 +293,18 @@
                 break;
             case "info_jml_karyawan":
                 $sqlShift = "SELECT s.nama_shift AS 'Nama Shift', COUNT(js.id_karyawan) AS 'Jumlah Karyawan'
-             FROM shift s
-             LEFT JOIN jadwal_shift js ON s.kode_shift = js.kode_shift
-             GROUP BY s.kode_shift";
+                             FROM shift s
+                             LEFT JOIN jadwal_shift js ON s.kode_shift = js.kode_shift
+                             GROUP BY s.kode_shift";
                 $resultShift = $conn->query($sqlShift);
 
                 // Mengambil total jumlah karyawan
                 $sqlTotal = "SELECT COUNT(*) AS 'Jumlah Karyawan' FROM jadwal_shift";
                 $resultTotal = $conn->query($sqlTotal);
                 $rowTotal = $resultTotal->fetch_assoc();
-                if ($resultShift->num_rows > 0) {
-                    echo "<table>
+                if ($resultShift->num_rows > 0) {?>
+                    <h3>Jumlah Karyawan per-shift</h3>
+                    <?php echo "<table border='1'>
                             <thead>
                                 <tr>
                                     <th>Nama Shift</th>
