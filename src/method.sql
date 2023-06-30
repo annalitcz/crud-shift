@@ -114,7 +114,49 @@ JOIN db_jadwal.shift s ON js.kode_shift = s.kode_shift
 WHERE s.jam_mulai >= '12:00:00' AND s.jam_selesai <= '17:00:00';
 
 
--- Stored Function
+-- Stored Function menghitung total karyawan yang keluar:
+DELIMITER //
+
+CREATE FUNCTION hitung_total_karyawan_keluar() RETURNS INT
+BEGIN
+  DECLARE jumlah INT;
+  
+  SELECT COUNT(*) INTO jumlah  --cara panggil: SELECT hitung_total_karyawan_keluar();
+  FROM karyawan_old;
+  
+  RETURN jumlah;
+END //
+
+DELIMITER ;
+
+--Stored Function menghitung total karyawan:
+DELIMITER //
+
+CREATE FUNCTION hitung_total_karyawan() RETURNS INT
+BEGIN
+  DECLARE total INT;
+
+  SELECT COUNT(*) INTO Total
+  FROM karyawan;
+
+  RETURN total;
+
+END//
+
+DELIMITER;
+
+-- Stored Function menghitung total jadwal:
+DELIMITER //
+
+CREATE FUNCTION hitung_total_jadwal() RETURNS INT
+BEGIN
+  DECLARE total INT;
+  SELECT COUNT(*) INTO total
+  FROM jadwal_shift;
+  RETURN total;
+END//
+
+DELIMITER ;
 
 -- Built In Function jumlah karyawan:
 SELECT s.nama_shift AS "Nama Shift", COUNT(js.id_karyawan) AS "Jumlah Karyawan"

@@ -21,6 +21,12 @@
         margin-top: 50px;
     }
 
+    .flex {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
     form {
         display: flex;
         justify-content: center;
@@ -44,6 +50,10 @@
         border-radius: 5px;
         cursor: pointer;
         margin-bottom: 5px;
+    }
+
+    #infoButton {
+        height: fit-content;
     }
 
     table {
@@ -133,22 +143,24 @@
 </style>
 
 <body>
-    <h3>Anzz App</h3>
-    <form method="post" action="">
-        <select name="tabel">
-            <option selected>Pilih</option>
-            <option value="shift">Shift</option>
-            <option value="karyawan">Karyawan</option>
-            <option value="jadwal_shift">Jadwal Shift</option>
-            <option value="info_jml_karyawan">Jumlah Karyawan</option>
-            <option value="resign">Karyawan Old</option>
-            <option value="jadwal_pagi">Shift pagi</option>
-            <option value="jadwal_siang">Shift siang</option>
-        </select>
-        <input type="text" name="search" class="search-input" placeholder="Cari...">
-        <button type="submit">Tampilkan Data</button>
-    </form>
-    <button id="infoButton">Tutorial Pencarian</button>
+    <h3>&copy; Anzz App</h3>
+    <div class="flex">
+        <form method="post" action="">
+            <select name="tabel">
+                <option selected>Pilih</option>
+                <option value="shift">Shift</option>
+                <option value="karyawan">Karyawan</option>
+                <option value="jadwal_shift">Jadwal Shift</option>
+                <option value="info_jml_karyawan">Jumlah Karyawan Per-shift</option>
+                <option value="resign">Karyawan Old</option>
+                <option value="jadwal_pagi">Shift pagi</option>
+                <option value="jadwal_siang">Shift siang</option>
+            </select>
+            <input type="text" name="search" class="search-input" placeholder="Cari...">
+            <button type="submit">Tampilkan Data</button>
+        </form>
+        <button id="infoButton">Tutorial Pencarian</button>
+    </div>
     <div class="info-div">
         <p>1. tabel shift : pilih tabel shift + masukkan nama shift <br>
             2. tabel karyawan : pilih tabel karyawan + masukkan nama karwayan <br>
@@ -222,29 +234,42 @@
                 $sql = "SELECT * FROM karyawan WHERE nama_karyawan LIKE '%$search%'";
                 $result = mysqli_query($conn, $sql);
 
+                $sql_total = "SELECT hitung_total_karyawan() AS 'total'";
+                $resultTotal = $conn->query($sql_total);
+                $rowTotal = $resultTotal->fetch_assoc();
+
                 if (mysqli_num_rows($result) > 0) { ?>
                     <h3 class="txt-center">Karyawan</h3>
                     <div class="box-db">
-                        <?php
-                        echo "<table border='1'";
-                        echo "<tr>
-                        <th>ID karyawan</th>
-                        <th>Nama karyawan</th>
-                        <th>Jabatan karyawan</th>
-                        <th>Aksi</th>
-                      </tr>";
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            echo "<tr>
-                            <td>" . $row["id_karyawan"] . "</td>
-                            <td>" . $row["nama_karyawan"] . "</td>
-                            <td>" . $row["jabatan_karyawan"] . "</td>";
-                            echo "  <td>
-                              <a href='./method/editKaryawan.php?id=" . $row["id_karyawan"] . "'>Edit</a> | 
-                              <a href='./method/hapusKaryawan.php?id=" . $row["id_karyawan"] . "' onclick='return confirm(\"Anda yakin ingin menghapus data ini?\")'>Hapus</a>
-                            </td>
-                          </tr>";
-                        }
-                        echo "</table>"; ?>
+                        <table border='1'>
+                            <thead>
+                                <tr>
+                                    <th>ID karyawan</th>
+                                    <th>Nama karyawan</th>
+                                    <th>Jabatan karyawan</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php while ($row = mysqli_fetch_assoc($result)) { ?>
+                                    <tr>
+                                        <td><?php echo $row["id_karyawan"]; ?></td>
+                                        <td><?php echo $row["nama_karyawan"]; ?></td>
+                                        <td><?php echo $row["jabatan_karyawan"]; ?></td>
+                                        <td>
+                                            <a href='./method/editKaryawan.php?id=<?php echo $row["id_karyawan"]; ?>'>Edit</a> |
+                                            <a href='./method/hapusKaryawan.php?id=<?php echo $row["id_karyawan"]; ?>' onclick='return confirm("Anda yakin ingin menghapus data ini?")'>Hapus</a>
+                                        </td>
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan='3'>Total Karyawan</td>
+                                    <td><?php echo $rowTotal['total'] ?></td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
                 <?php
                 } else {
@@ -252,6 +277,7 @@
                 }
                 echo "<br><a href='./method/tambahKaryawan.php'>Tambah</a>";
                 break;
+
             case "jadwal_shift":
                 $sql = "SELECT jadwal_shift.id_jadwal, shift.nama_shift, karyawan.nama_karyawan, jadwal_shift.tanggal
                     FROM jadwal_shift
@@ -259,31 +285,45 @@
                     JOIN karyawan ON jadwal_shift.id_karyawan = karyawan.id_karyawan
                     WHERE jadwal_shift.tanggal LIKE '%$search%'";
                 $result = mysqli_query($conn, $sql);
+
+                // Query untuk menghitung total jumlah jadwal shift
+                $sql_total = "SELECT hitung_total_jadwal() AS total_jadwal_shift";
+                $result_total = mysqli_query($conn, $sql_total);
+                $row_total = $result_total->fetch_assoc();
                 if (mysqli_num_rows($result) > 0) { ?>
                     <h3 class="txt-center">Jadwal Shift</h3>
                     <div class='box-db'>
-                        <?php
-                        echo "<table border='1'";
-                        echo "<tr>
-                        <th>ID jadwal</th>
-                        <th>Nama shift</th>
-                        <th>Nama karyawan</th>
-                        <th>Tanggal</th>
-                        <th>Aksi</th>
-                      </tr>";
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            echo "<tr>
-                            <td>" . $row["id_jadwal"] . "</td>
-                            <td>" . $row["nama_shift"] . "</td>
-                            <td>" . $row["nama_karyawan"] . "</td>
-                            <td>" . $row["tanggal"] . "</td>";
-                            echo "  <td>
-                                <a href='./method/editJadwal.php?id=" . $row["id_jadwal"] . "'>Edit</a> | 
-                                <a href='./method/hapusJadwal.php?id=" . $row["id_jadwal"] . "' onclick='return confirm(\"Anda yakin ingin menghapus data ini?\")'>Hapus</a>
-                            </td>
-                          </tr>";
-                        }
-                        echo "</table>"; ?>
+                        <table border='1'>
+                            <thead>
+                                <tr>
+                                    <th>ID jadwal</th>
+                                    <th>Nama shift</th>
+                                    <th>Nama karyawan</th>
+                                    <th>Tanggal</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php while ($row = mysqli_fetch_assoc($result)) { ?>
+                                    <tr>
+                                        <td><?php echo $row["id_jadwal"]; ?></td>
+                                        <td><?php echo $row["nama_shift"]; ?></td>
+                                        <td><?php echo $row["nama_karyawan"]; ?></td>
+                                        <td><?php echo $row["tanggal"]; ?></td>
+                                        <td>
+                                            <a href='./method/editJadwal.php?id=<?php echo $row["id_jadwal"]; ?>'>Edit</a> |
+                                            <a href='./method/hapusJadwal.php?id=<?php echo $row["id_jadwal"]; ?>' onclick='return confirm("Anda yakin ingin menghapus data ini?")'>Hapus</a>
+                                        </td>
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="4">Total Jadwal Shift</td>
+                                    <td><?php echo $row_total['total_jadwal_shift']; ?></td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
                 <?php
                 } else {
@@ -302,7 +342,7 @@
                 $sqlTotal = "SELECT COUNT(*) AS 'Jumlah Karyawan' FROM jadwal_shift";
                 $resultTotal = $conn->query($sqlTotal);
                 $rowTotal = $resultTotal->fetch_assoc();
-                if ($resultShift->num_rows > 0) {?>
+                if ($resultShift->num_rows > 0) { ?>
                     <h3>Jumlah Karyawan per-shift</h3>
                     <?php echo "<table border='1'>
                             <thead>
@@ -334,26 +374,43 @@
             case "resign":
                 $sql = "SELECT * FROM karyawan_old WHERE nama_karyawan_old LIKE '%$search%'";
                 $result = mysqli_query($conn, $sql);
-                if (mysqli_num_rows($result) > 0) { ?>
+                if (mysqli_num_rows($result) > 0) {
+                    ?>
                     <h3 class="txt-center">Karyawan Old</h3>
                     <div class="box-db">
                         <?php
-                        echo "<table border='1'";
-                        echo "<tr>
-                        <th>ID karyawan</th>
-                        <th>Nama karyawan</th>
-                        <th>Jabatan karyawan</th>
-                        <th>Tanggal Resign</th>
-                      </tr>";
+                        echo "<table border='1'>";
+                        echo "<thead>
+                                <tr>
+                                    <th>ID karyawan</th>
+                                    <th>Nama karyawan</th>
+                                    <th>Jabatan karyawan</th>
+                                    <th>Tanggal Resign</th>
+                                </tr>
+                            </thead>";
+                        echo "<tbody>";
                         while ($row = mysqli_fetch_assoc($result)) {
                             echo "<tr>
-                            <td>" . $row["id_karyawan_old"] . "</td>
-                            <td>" . $row["nama_karyawan_old"] . "</td>
-                            <td>" . $row["jabatan_karyawan_old"] . "</td>
-                            <td>" . $row["tanggal_keluar"] . "</td>
-                          </tr>";
+                                    <td>" . $row["id_karyawan_old"] . "</td>
+                                    <td>" . $row["nama_karyawan_old"] . "</td>
+                                    <td>" . $row["jabatan_karyawan_old"] . "</td>
+                                    <td>" . $row["tanggal_keluar"] . "</td>
+                                </tr>";
                         }
-                        echo "</table>"; ?>
+                        echo "</tbody>";
+                        echo "<tfoot>
+                                <tr>
+                                    <td colspan='3'>Total Karyawan Resign</td>
+                                    <td>";
+                        $query_total_resign = "SELECT hitung_total_karyawan_keluar() AS total_resign";
+                        $result_total_resign = mysqli_query($conn, $query_total_resign);
+                        $row_total_resign = mysqli_fetch_assoc($result_total_resign);
+                        echo $row_total_resign["total_resign"];
+                        echo "</td>
+                                </tr>
+                              </tfoot>";
+                        echo "</table>";
+                        ?>
                     </div>
                 <?php
                 } else {
@@ -418,12 +475,11 @@
     <?php
                 break;
             default:
-                echo "<h3>Pilih dulu coy tabel yang akan ditampilkan</h3>";
+                echo "<h3>Tidak ada tabel yang terpilih, silahkan pilih tabel pada menu dropdown.</h3>";
         }
         mysqli_close($conn);
     }
 
     ?>
 </body>
-
 </html>
