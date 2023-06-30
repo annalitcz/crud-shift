@@ -30,7 +30,9 @@ select {
   border-radius: 5px;
   border: none;
 }
-
+select>option:nth-child(1){
+  text-align: center;
+}
 button {
   margin-left: 10px;
   padding: 10px;
