@@ -149,7 +149,7 @@
                     FROM jadwal_shift
                     JOIN shift ON jadwal_shift.kode_shift = shift.kode_shift
                     JOIN karyawan ON jadwal_shift.id_karyawan = karyawan.id_karyawan
-                    WHERE jadwal_shift.tanggal LIKE '%$search%'";
+                    WHERE jadwal_shift.tanggal LIKE '%$search%' ORDER BY jadwal_shift.id_jadwal ASC";
                 $result = mysqli_query($conn, $sql);
 
                 // Query untuk menghitung total jumlah jadwal shift
