@@ -1,0 +1,23 @@
+##blok sql
+- JADWAL SHIFT 
+$sql = "SELECT jadwal_shift.id_jadwal, shift.nama_shift, karyawan.nama_karyawan, jadwal_shift.tanggal 
+        FROM jadwal_shift =>  [mengambil kolom "id_jadwal" dari tabel "jadwal_shift", kolom "nama_shift" dari tabel "shift", kolom "nama_karyawan" dari tabel "karyawan", dan kolom "tanggal" dari tabel "jadwal_shift".)
+
+        JOIN shift ON jadwal_shift.kode_shift = shift.kode_shift => [menggabungkan data dari tabel "shift" dengan tabel "jadwal_shift".)
+
+        JOIN karyawan ON jadwal_shift.id_karyawan = karyawan.id_karyawan => [ menggabungkan data dari tabel "karyawan" dengan tabel "jadwal_shift".)
+
+        WHERE jadwal_shift.tanggal LIKE '%$search%' => [menyaring pencarian sesuai $search)
+
+        ORDER BY jadwal_shift.id_jadwal ASC"; => [mengurutkan hasil berdasarkan kolom "id_jadwal" dari tabel "jadwal_shift" secara ascending)
+
+- JUMLAH KARYAWAN PER SHIFT 
+$sqlShift = "SELECT s.nama_shift AS 'Nama Shift', COUNT(js.id_karyawan) AS 'Jumlah Karyawan' => [mengambil kolom "nama_shift" dari tabel "shift" dan juga menghitung jumlah karyawan dengan menggunakan fungsi COUNT() pada kolom "id_karyawan" dari tabel "jadwal_shift")
+
+             FROM shift s
+
+             LEFT JOIN jadwal_shift js ON s.kode_shift = js.kode_shift => [memastikan bahwa semua baris dari tabel "shift" tetap ditampilkan, bahkan jika tidak ada baris yang cocok di tabel "jadwal_shift" dengan menggunakan kondisi join "ON s.kode_shift = js.kode_shift".)
+
+             GROUP BY s.kode_shift"; => [mengelompokkan hasil berdasarkan nilai pada kolom "kode_shift" dari tabel "shift".)
+
+-

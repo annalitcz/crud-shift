@@ -67,7 +67,9 @@ DELIMITER ;
 -- Stored Procedure tambah data karyawan :
 DELIMITER //
 
-CREATE PROCEDURE tambah_data_karyawan(p_nama_karyawan VARCHAR(20), p_jabatan_karyawan VARCHAR(20))
+CREATE PROCEDURE tambah_data_karyawan(
+  p_nama_karyawan VARCHAR(20),
+  p_jabatan_karyawan VARCHAR(20))
 BEGIN
   INSERT INTO karyawan (nama_karyawan, jabatan_karyawan)
   VALUES (p_nama_karyawan, p_jabatan_karyawan);
@@ -161,11 +163,11 @@ DELIMITER ;
 -- Built In Function jumlah karyawan:
 SELECT s.nama_shift AS "Nama Shift", COUNT(js.id_karyawan) AS "Jumlah Karyawan"
 FROM shift s
-LEFT JOIN jadwal_shift js ON s.kode_shift = js.kode_shift
-GROUP BY s.kode_shift
-UNION ALL
+LEFT JOIN jadwal_shift js ON s.kode_shift = js.kode_shift  --untuk mengambil semua baris dari tabel "shift" bahkan jika tidak ada baris yang sesuai di tabel "jadwal_shift".
+GROUP BY s.kode_shift --untuk mengelompokkan hasil berdasarkan kolom "kode_shift", sehingga hasil COUNT() akan memberikan jumlah karyawan untuk setiap shift
+UNION ALL --operator untuk menggabungkan hasil dari dua query terpisah menjadi satu hasil tunggal.
 SELECT 'Total' AS "Nama Shift", COUNT(js.id_karyawan) AS "Jumlah Karyawan"
-FROM jadwal_shift js;
+FROM jadwal_shift js;  --menghitung jumlah karyawan dalam tabel "jadwal_shift" tanpa melibatkan tabel "shift"
 
 -- Trigger insert old karyawan :
 DELIMITER //

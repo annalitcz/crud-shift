@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jadwal Shift</title>
-    <link rel="stylesheet" href="./index.css">
+    <link rel="stylesheet" href="./index.css"/>
 </head>
 <body>
     <h3>&copy; Anzz App</h3>
@@ -50,22 +50,23 @@
     </script>
 
     <?php
-    include "./connection.php";
+    include "./connection.php"; //import file connection.php untuk menggunakan variabel $conn
 
     // Cek koneksi
     if (!$conn) {
         die("Koneksi gagal: " . mysqli_connect_error());
     }
-    if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        $tabel = $_POST["tabel"];
-        $search = $_POST["search"];
+    if ($_SERVER["REQUEST_METHOD"] == "POST") { //Jika metode permintaan adalah "POST", maka blok kode di bawahnya akan dieksekusi.
+        $tabel = $_POST["tabel"]; //variabel untuk menyimpan nilai tabel yang dipilih melalui option yang tersedia
+        $search = $_POST["search"]; //variabel untuk menyimpan 
 
-        switch ($tabel) {
-            case "shift":
+        switch ($tabel) { //logika untuk menampilkan tabel sesuai yang dipilih
+            case "shift": //memeriksa apakah nilai yang dievaluasi sama dengan "shift"
                 $sql = "SELECT * FROM shift WHERE nama_shift LIKE '%$search%'";
-                $result = mysqli_query($conn, $sql);
+                $result = mysqli_query($conn, $sql); //eksekusi query
 
-                if (mysqli_num_rows($result) > 0) {
+                if (mysqli_num_rows($result) > 0) { //memeriksa apakah ada hasil (baris) yang dikembalikan oleh query. Jika ada hasil, blok kode di dalam kurung kurawal pertama akan dieksekusi.
+
                     // output data dari setiap baris
                     echo "<h3 class='txt-center'>Shift</h3>";
                     echo "<div class='box-db'>";
@@ -77,7 +78,7 @@
                         <th>Jam selesai</th>
                         <th>Aksi</th>
                       </tr>";
-                    while ($row = mysqli_fetch_assoc($result)) {
+                    while ($row = mysqli_fetch_assoc($result)) { //mengambil setiap baris hasil query
                         echo "<tr>
                             <td>" . $row["kode_shift"] . "</td>
                             <td>" . $row["nama_shift"] . "</td>
@@ -95,7 +96,8 @@
                     echo "0 results";
                 }
                 echo "<br><a href='./method/tambahShift.php'>Tambah</a>";
-                break;
+                break; //mengakhiri blok case "shift" dalam switch statement.
+
             case "karyawan":
                 $sql = "SELECT * FROM karyawan WHERE nama_karyawan LIKE '%$search%'";
                 $result = mysqli_query($conn, $sql);
@@ -171,7 +173,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php while ($row = mysqli_fetch_assoc($result)) { ?>
+                                <?php while ($row = mysqli_fetch_assoc($result)) { ?> 
                                     <tr>
                                         <td><?php echo $row["id_jadwal"]; ?></td>
                                         <td><?php echo $row["nama_shift"]; ?></td>
@@ -208,7 +210,7 @@
                 // Mengambil total jumlah karyawan
                 $sqlTotal = "SELECT COUNT(*) AS 'Jumlah Karyawan' FROM jadwal_shift";
                 $resultTotal = $conn->query($sqlTotal);
-                $rowTotal = $resultTotal->fetch_assoc();
+                $rowTotal = $resultTotal->fetch_assoc(); //mengambil baris pertama dari hasil query sebagai array asosiatif.
                 if ($resultShift->num_rows > 0) { ?>
                     <h3>Jumlah Karyawan per-shift</h3>
                     <?php echo "<table border='1'>
@@ -220,7 +222,7 @@
                             </thead>
                             <tbody>";
                     // Menampilkan data shift dan jumlah karyawan
-                    while ($row = $resultShift->fetch_assoc()) {
+                    while ($row = $resultShift->fetch_assoc()) { //loop while yang akan terus berjalan selama ada baris (rekaman) dalam hasil query dari tabel "shift" yang disimpan dalam variabel $resultShift
                         echo "<tr>
                                 <td>" . $row['Nama Shift'] . "</td>
                                 <td>" . $row['Jumlah Karyawan'] . "</td>
